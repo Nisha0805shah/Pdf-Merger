@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Merge PDF</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">Merge Pdf Online</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Features</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Pricing</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link disabled">Disabled</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="container">
+    <div class="mb-3 my-5">
+      <form method="post" action="/merge" enctype="multipart/form-data">
+        <div class="alert alert-success" role="alert" id="loginAlert">
+          <p style="text-align: center;">Incorrect Credential</p>
+        </div>
+        <script>
+          $(document).ready(function () {
+            $('#loginAlert').hide();
+            const urlParams = new URLSearchParams(window.location.search);
+            const myParam = urlParams.get('error');
+            if (myParam == "Incorrect_Credential") {
+              $('#loginAlert').show();
+            }
+            setTimeout(() => {
+              $('#loginAlert').hide();
+
+            }, 3000)
+
+            $('#embeded').hide();
+            const name = urlParams.get('name');
+            // console.log(name);
+            if (name != null) {
+              // console.log("In ifff.....");
+              $('#embeded').show();
+              $('#setsrc').attr("src", "../static/" + name + "");
+              // src="../uploads/"+name+"";
+
+            }
+            else {
+              // console.log("In elseee....");
+              $('#embeded').hide();
+            }
+
+          })
+
+
+
+
+          function GetFileSizeNameAndType() {
+            document.getElementById('fp').innerHTML = "";
+            var fi = document.getElementById('fileUpload'); // GET THE FILE INPUT AS VARIABLE.
+
+            var totalFileSize = 0;
+
+            if (fi.files.length > 0) {
+              for (var i = 0; i <= fi.files.length - 1; i++) {
+
+                document.getElementById('fp').innerHTML =
+                  document.getElementById('fp').innerHTML
+                  +
+                  '<br /> ' + 'Selected File Name is <b>' + fi.files.item(i).name + "</b>.";
+                console.log(fi.files.item(i));
+
+              }
+            }
+          }
+
+          
+          function downloadFile() {
+
+  
+
+              // e.preventDefault();
+              console.log(".........");
+              const urlParams = new URLSearchParams(window.location.search);
+              const name = urlParams.get('name');
+              console.log(name);
+              let filename = $("#filename").val()
+              console.log(filename);
+              // console.log(filepath);
+              let obj = {
+                oldname : name,
+                newname : filename
+              };
+              //let arr = [name,filename];
+              console.log(obj);
+              let filepath = "download/" + JSON.stringify(obj) + "";
+              console.log(filepath);
+              $('#formpath').attr('action',filepath);
+              // $('a#hrefsrc').attr({target:'_blank',href:'filepath'});
+
+
+
+          };
+
+        </script>
+        <label for="formFileMultiple" class="form-label">Select pdf</label>
+        <div>
+          <input class="form-control mb-3" name="pdfs" type="file" id="fileUpload" multiple accept=".pdf"
+            style="width: 90%; display: inline;" value="" onchange="GetFileSizeNameAndType()" required>
+          <button type="submit" id="preview" class="btn btn-secondary" style="float: right;">Preview</button>
+        </div>
+      </form>
+        <div id="fp"></div>
+        <div id="embeded" style="margin: top 50px;">
+          <embed id="setsrc" type="application/pdf" height="600" width="500" style="float: right; margin-bottom: 200px;">
+          <form action="/download" id="formpath"> 
+            <input id="filename" placeholder="Enter File name"  required></input>
+            <button type="submit" id="download" class="btn btn-secondary" onclick="downloadFile()">Download</button>
+          </form>
+        </div>
+        <!-- <button type="submit" id="submit" class="btn btn-secondary" style="float: right;">Save</button> -->
+      
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+    crossorigin="anonymous"></script>
+
+</body>
+
+</html>
