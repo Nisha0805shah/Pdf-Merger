@@ -18,6 +18,7 @@
     "express-session": "^1.17.3",
     "multer": "^1.4.5-lts.1",
     "nodemon": "^2.0.20",
-    "pdf-merger-js": "^4.2.0"
+    "pdf-merger-js": "^4.2.0",
+    "pdf-page-counter": "^1.0.3"
   }
 }

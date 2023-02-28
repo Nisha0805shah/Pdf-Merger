@@ -9,6 +9,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 </head>
 
 <body>
@@ -39,9 +40,9 @@
   </nav>
   <div class="container">
     <div class="mb-3 my-5">
-      <form method="post" action="/merge" enctype="multipart/form-data">
+      <form action="/merge" id="getpdf" enctype="multipart/form-data" method="post">
         <div class="alert alert-success" role="alert" id="loginAlert">
-          <p style="text-align: center;">Incorrect Credential</p>
+          <p style="text-align: center;">Please select atleast two files to merge</p>
         </div>
         <script>
           $(document).ready(function () {
@@ -71,76 +72,126 @@
               $('#embeded').hide();
             }
 
+
           })
-
-
 
 
           function GetFileSizeNameAndType() {
             document.getElementById('fp').innerHTML = "";
-            var fi = document.getElementById('fileUpload'); // GET THE FILE INPUT AS VARIABLE.
-
+            fi = document.getElementById('fileUpload'); // GET THE FILE INPUT AS VARIABLE.
+            var arr;
             var totalFileSize = 0;
+            filelength = fi.files.length;
+            document.getElementById('filesize').value = filelength;
+            const files = Object.values(fi.files);
 
+
+            // console.log("Innter value :: "+);
             if (fi.files.length > 0) {
-              for (var i = 0; i <= fi.files.length - 1; i++) {
 
-                document.getElementById('fp').innerHTML =
-                  document.getElementById('fp').innerHTML
-                  +
-                  '<br /> ' + 'Selected File Name is <b>' + fi.files.item(i).name + "</b>.";
-                console.log(fi.files.item(i));
+              files.map((element, index) => {
+                var reader = new FileReader();
+                var count = 0;
+                reader.readAsBinaryString(element);
+                reader.onloadend = function () {
+                  count = reader.result.match(/\/Type[\s]*\/Page[^s]/g).length
+                  // console.log("filepage"+index);
+                  let name = "filepage" + index;
+                  // console.log(name);
+                  //document.getElementById('id').name = name;
+                  let tag = document.getElementById(name);
 
-              }
+                  console.log(count);
+                  tag.value = count;
+                  let dropid="dropdown"+index;
+                  // tag.setAttribute("name", name);
+                  console.log(tag.value);
+                  for (i = 1; i <=count; i++) {
+                    var opt = document.createElement("option");
+                    document.getElementById(dropid).innerHTML += '<option id="' + i + ' ">' + i + '</option>';
+                  }
+                  console.log(tag);
+                }
+              });
+
+
+
+              document.getElementById('fp').innerHTML = files.map((element, index) => (`
+                
+                </br>
+                <span class="bi bi-file-pdf-fill teal-color" style="font-size: 100px;"> 
+                  </span>Selected File Name is <b> ${element.name} </b>.
+                <div class="card" id="card" style="width: 18rem;">  
+                <div class="form-check">
+                <input class="form-check-input" type="radio" value="all" name="page-selection-${index}"/>All
+                </div>
+                <div class="form-check">
+                <input class="form-check-input" type="radio" value="Odd" name="page-selection-${index}"/>Odd
+                </div>
+                <div class="form-check">
+                <input class="form-check-input" type="radio" value="Even" name="page-selection-${index}"/>Even
+                </div>
+                 <select id="dropdown${index}" value="Custom" name="page-selection-${index}" multiple>
+
+                </select> 
+                </div>
+                
+                <input type="hidden" id="filepage${index}" name="filepage${index}" value="">`
+              ))
+
             }
           }
 
-          
+
           function downloadFile() {
 
-  
-
-              // e.preventDefault();
-              console.log(".........");
-              const urlParams = new URLSearchParams(window.location.search);
-              const name = urlParams.get('name');
-              console.log(name);
-              let filename = $("#filename").val()
-              console.log(filename);
-              // console.log(filepath);
-              let obj = {
-                oldname : name,
-                newname : filename
-              };
-              //let arr = [name,filename];
-              console.log(obj);
-              let filepath = "download/" + JSON.stringify(obj) + "";
-              console.log(filepath);
-              $('#formpath').attr('action',filepath);
-              // $('a#hrefsrc').attr({target:'_blank',href:'filepath'});
 
 
+            // e.preventDefault();
+            console.log(".........");
+            const urlParams = new URLSearchParams(window.location.search);
+            const name = urlParams.get('name');
+            console.log(name);
+            let filename = $("#filename").val()
+            console.log(filename);
+            let obj = {
+              oldname: name,
+              newname: filename
+            };
+            //let arr = [name,filename];
+            console.log(obj);
+            let filepath = "download/" + JSON.stringify(obj) + "";
+            console.log(filepath);
+            $('#formpath').attr('action', filepath);
+            // $('a#hrefsrc').attr({target:'_blank',href:'filepath'});
 
           };
 
+        
+
         </script>
         <label for="formFileMultiple" class="form-label">Select pdf</label>
-        <div>
-          <input class="form-control mb-3" name="pdfs" type="file" id="fileUpload" multiple accept=".pdf"
-            style="width: 90%; display: inline;" value="" onchange="GetFileSizeNameAndType()" required>
-          <button type="submit" id="preview" class="btn btn-secondary" style="float: right;">Preview</button>
+        <i class="fas fas-paper-plane"></i>
+        <div class="row">
+          <input class="form-control mb-3 w-50 col-sm-8 col-md-8" name="pdfs" type="file" id="fileUpload" multiple
+            accept=".pdf" value="" onchange="GetFileSizeNameAndType()" required>
+          <input type="hidden" name="filesize" value="" id="filesize">
+          <button type="submit" id="preview" class="btn btn-secondary mb-3 mx-5 col-sm-2">Preview</button>
         </div>
-      </form>
         <div id="fp"></div>
-        <div id="embeded" style="margin: top 50px;">
-          <embed id="setsrc" type="application/pdf" height="600" width="500" style="float: right; margin-bottom: 200px;">
-          <form action="/download" id="formpath"> 
-            <input id="filename" placeholder="Enter File name"  required></input>
-            <button type="submit" id="download" class="btn btn-secondary" onclick="downloadFile()">Download</button>
-          </form>
-        </div>
-        <!-- <button type="submit" id="submit" class="btn btn-secondary" style="float: right;">Save</button> -->
-      
+      </form>
+
+
+      <div id="embeded" class="row">
+        <embed id="setsrc" type="application/pdf" class="form-control my-5 w-50 min-vh-100 float-end">
+        <form action="/download" id="formpath">
+          <button type="submit" id="download" class="btn btn-secondary float-end mb-2 mx-2"
+            onclick="downloadFile()">Download</button>
+          <input id="filename" placeholder="Enter File name" class="float-end mb-2 mx-2" required></input>
+        </form>
+      </div>
+      <!-- <button type="submit" id="submit" class="btn btn-secondary" style="float: right;">Save</button> -->
+
 
     </div>
   </div>

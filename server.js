@@ -6,6 +6,7 @@ const { mergePdf } = require('./merge');
 const upload = multer({ dest: 'uploads/' });
 const fs = require("fs");
 const { json } = require('express');
+const pdf = require('pdf-page-counter');
 // import { request } from 'https';
 const app = express();
 const port = 3000;
@@ -27,14 +28,33 @@ app.get('/', (req, res) => {
 
 app.post('/merge', upload.array('pdfs', 12), async (req, res, next) => {
     //console.log(req.files.length);
+   // console.log(arr);
+    // console.log(req);
+    // console.log(req.body['page-selection-0']);
+//    console.log(req.files);
+    //  let files = req.files;
+    //  let filearr = Object.entries(files);
+   
+    // var filearr  = Object.keys(files);
+    // console.log(typeof filearr);
+    // console.log(filearr);
+
 
     if (req.files.length < 2) {
         res.redirect('/?error=' + encodeURIComponent("Incorrect_Credential"));
     }
     else {
-        let d = await mergePdf(path.join(__dirname + '/' + req.files[0].path), path.join(__dirname + '/' + req.files[1].path))
+        let obj ={};
+        let pages = {}
+        for(let i=0;i<req.files.length;i++)
+        {
+            obj[i]=req.body['page-selection-'+`${i}`];
+            pages[i] = req.body['filepage'+`${i}`];
+        }
+        // console.log(obj);
+        // console.log(pages);
+        let d = await mergePdf(req.files,obj,pages);
         res.redirect('/?name=' + d + '.pdf');
-        //await res.redirect(`http://localhost:3000/static/${d}.pdf`);
     }
 })
 
