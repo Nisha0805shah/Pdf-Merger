@@ -5,8 +5,12 @@ const multer = require('multer');
 const { mergePdf } = require('./merge');
 const upload = multer({ dest: 'uploads/' });
 const fs = require("fs");
+require('dotenv').config();
 const { json } = require('express');
 const pdf = require('pdf-page-counter');
+const PDF = require('pdf-page-counter');
+
+const nodemailer = require("nodemailer");
 // import { request } from 'https';
 const app = express();
 const port = 3000;
@@ -18,26 +22,9 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/template/index.html'));
 })
 
-// app.get('/upload/202112125_Nisha_Shah',(req,res) => {
-//     res.sendFile(__dirname,"../uploads/"+req.param('202112125_Nisha_Shah'));
-//     });
-
-// app.get('/show',(req,res)=>{
-//     res.sendFile(path.join(__dirname,'/uploads/202112125_Nisha_Shah.pdf'));
-// })
 
 app.post('/merge', upload.array('pdfs', 12), async (req, res, next) => {
-    //console.log(req.files.length);
-   // console.log(arr);
-    // console.log(req);
-    // console.log(req.body['page-selection-0']);
-//    console.log(req.files);
-    //  let files = req.files;
-    //  let filearr = Object.entries(files);
-   
-    // var filearr  = Object.keys(files);
-    // console.log(typeof filearr);
-    // console.log(filearr);
+ 
 
 
     if (req.files.length < 2) {
@@ -51,8 +38,7 @@ app.post('/merge', upload.array('pdfs', 12), async (req, res, next) => {
             obj[i]=req.body['page-selection-'+`${i}`];
             pages[i] = req.body['filepage'+`${i}`];
         }
-        // console.log(obj);
-        // console.log(pages);
+        
         let d = await mergePdf(req.files,obj,pages);
         res.redirect('/?name=' + d + '.pdf');
     }
@@ -75,7 +61,7 @@ app.get('/download/:obj', (req, res) => {
     //var fs = require('fs');
 
     fs.writeFileSync('public/'+ newname +'.pdf',fs.readFileSync('public/'+oldname+''));
-    console.log('File Copied....');
+    // console.log('File Copied....');
 
 
      res.download(path+newname+".pdf", function(err) {
@@ -86,6 +72,96 @@ app.get('/download/:obj', (req, res) => {
 
 })
 
+
+
+
+
+
+app.get('/email/:obj',async(req,res)=>{
+    console.log(req.params);
+    const path = "public/";
+    const object = req.params;
+    const arr = object.obj;
+    const newarr = JSON.parse(arr);
+    const filename = newarr.filename;
+    const email = newarr.email;
+    // sendVerifyMail(path,email,filename);
+    try 
+    {
+        let transport = nodemailer.createTransport({
+            host: "smtp.gmail.com",
+            port: 465,
+            secure: true,
+            service : 'Gmail',
+            auth: {
+              user: process.env.EMAIL,
+              pass: process.env.PASSWORD
+            }
+        });
+
+        let mailDetails = {
+            from: process.env.EMAIL,
+            to: email,
+            subject: 'An Attached File',
+            text: 'Check out this attached pdf file',
+            attachments: [{
+                filename: filename,
+                path: 'public/'+filename,
+                contentType: 'application/pdf'
+              }],
+            html: '<p>Dear '+email+'\n\n, Pdf is : <b>'+filename+'</b>'
+        }
+        transport.sendMail(mailDetails, function(err ) {
+            if(err) {
+                console.log({message: err});
+            } else {
+                console.log('Email sent successfully -');
+                res.redirect('/');
+            }
+        });
+    }
+    catch(error){
+        res.json({msg: error})
+    }
+})
+
+
+
+
+
+
+const sendVerifyMail = async (name,toMail,pdf) => {
+    try 
+        {
+            let transport = nodemailer.createTransport({
+                host: "smtp.gmail.com",
+                port: 465,
+                secure: true,
+                service : 'Gmail',
+                auth: {
+                  user: process.env.EMAIL,
+                  pass: process.env.PASSWORD
+                }
+            });
+
+            let mailDetails = {
+                from: process.env.EMAIL,
+                to: toMail,
+                subject: 'Verify Mail',
+                html: '<p>Dear '+name+'\n\n, Pdf is : <b>'+pdf+'</b>'
+            }
+            transport.sendMail(mailDetails, function(err, data) {
+                if(err) {
+                    console.log({message: err.message});
+                } else {
+                    console.log('Email sent successfully -');
+                }
+            });
+        }
+        catch(error){
+            res.json({msg: error})
+        }
+}
 
 app.listen(port, () => {
     console.log(`app on http://localhost:${port}`);

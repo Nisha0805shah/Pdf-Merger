@@ -58,11 +58,14 @@
             }, 3000)
 
             $('#embeded').hide();
+            $('#email').hide();
+            
             const name = urlParams.get('name');
             // console.log(name);
             if (name != null) {
               // console.log("In ifff.....");
               $('#embeded').show();
+              $('#email').show();
               $('#setsrc').attr("src", "../static/" + name + "");
               // src="../uploads/"+name+"";
 
@@ -122,18 +125,20 @@
                 <span class="bi bi-file-pdf-fill teal-color" style="font-size: 100px;"> 
                   </span>Selected File Name is <b> ${element.name} </b>.
                 <div class="card" id="card" style="width: 18rem;">  
-                <div class="form-check">
-                <input class="form-check-input" type="radio" value="all" name="page-selection-${index}"/>All
-                </div>
-                <div class="form-check">
-                <input class="form-check-input" type="radio" value="Odd" name="page-selection-${index}"/>Odd
-                </div>
-                <div class="form-check">
-                <input class="form-check-input" type="radio" value="Even" name="page-selection-${index}"/>Even
-                </div>
-                 <select id="dropdown${index}" value="Custom" name="page-selection-${index}" multiple>
-
-                </select> 
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" value="all" name="page-selection-${index}"/>All
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" value="Odd" name="page-selection-${index}"/>Odd
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" value="Even" name="page-selection-${index}"/>Even
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" value="Custom" onchange="document.getElementById('dropdown${index}').style.display='inline'"/>Custom<br>
+                      <select id="dropdown${index}" value="Custom" name="page-selection-${index}" style="display: none;" multiple>
+                      </select> 
+                  </div>
                 </div>
                 
                 <input type="hidden" id="filepage${index}" name="filepage${index}" value="">`
@@ -145,7 +150,7 @@
 
           function downloadFile() {
 
-
+            // document.getElementById('dropdown${index}').style.display = inline;
 
             // e.preventDefault();
             console.log(".........");
@@ -167,12 +172,27 @@
 
           };
 
+          function getEmail(){
+            let emailid =  $("#emailid").val()
+            // Document.getElementById('emailid');
+            const urlParams = new URLSearchParams(window.location.search);
+            const name = urlParams.get('name');
+            let obj = {
+              filename: name,
+              email: emailid
+            };
+            console.log(obj);
+            let sendEmail = "email/" +  JSON.stringify(obj) + "";
+            console.log(sendEmail);
+            $('#emailpath').attr('action', sendEmail);
+          }
+
         
 
         </script>
         <label for="formFileMultiple" class="form-label">Select pdf</label>
         <i class="fas fas-paper-plane"></i>
-        <div class="row">
+        <div class="row"  >
           <input class="form-control mb-3 w-50 col-sm-8 col-md-8" name="pdfs" type="file" id="fileUpload" multiple
             accept=".pdf" value="" onchange="GetFileSizeNameAndType()" required>
           <input type="hidden" name="filesize" value="" id="filesize">
@@ -191,7 +211,12 @@
         </form>
       </div>
       <!-- <button type="submit" id="submit" class="btn btn-secondary" style="float: right;">Save</button> -->
-
+      <div id="email">
+      <form action="/email" id="emailpath">
+        <button type="submit" id="download" class="btn btn-secondary float-end mb-2 mx-2" onclick="getEmail()">Email</button>
+        <input id="emailid" type="email" placeholder="Enter recipient Email" class="float-end mb-2 mx-2" required></input>
+      </form>
+      </div>
 
     </div>
   </div>
