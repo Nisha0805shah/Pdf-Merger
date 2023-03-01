@@ -109,7 +109,7 @@ app.get('/email/:obj',async(req,res)=>{
                 path: 'public/'+filename,
                 contentType: 'application/pdf'
               }],
-            html: '<p>Dear '+email+'\n\n, Pdf is : <b>'+filename+'</b>'
+            html: '<p> Dear '+email+'\n\n, Pdf is : <b>'+filename+'</b>'
         }
         transport.sendMail(mailDetails, function(err ) {
             if(err) {
@@ -126,42 +126,6 @@ app.get('/email/:obj',async(req,res)=>{
 })
 
 
-
-
-
-
-const sendVerifyMail = async (name,toMail,pdf) => {
-    try 
-        {
-            let transport = nodemailer.createTransport({
-                host: "smtp.gmail.com",
-                port: 465,
-                secure: true,
-                service : 'Gmail',
-                auth: {
-                  user: process.env.EMAIL,
-                  pass: process.env.PASSWORD
-                }
-            });
-
-            let mailDetails = {
-                from: process.env.EMAIL,
-                to: toMail,
-                subject: 'Verify Mail',
-                html: '<p>Dear '+name+'\n\n, Pdf is : <b>'+pdf+'</b>'
-            }
-            transport.sendMail(mailDetails, function(err, data) {
-                if(err) {
-                    console.log({message: err.message});
-                } else {
-                    console.log('Email sent successfully -');
-                }
-            });
-        }
-        catch(error){
-            res.json({msg: error})
-        }
-}
 
 app.listen(port, () => {
     console.log(`app on http://localhost:${port}`);

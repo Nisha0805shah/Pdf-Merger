@@ -13,6 +13,7 @@ const mergePdf = async (arr,obj,pages) => {
 
   for(let i=0;i<arr.length;i++)
   {
+    console.log(typeof obj[i]);
     if(obj[i]=="all")
     {
       await merger.add(path.join(__dirname + '/' + arr[i].path));
@@ -21,7 +22,7 @@ const mergePdf = async (arr,obj,pages) => {
     {
       console.log("In even if");
       let evenPage = [];
-      for(let k=0;k<pages[i];k++){
+      for(let k=0;k<=pages[i];k++){
         if(k%2==0){
           evenPage.push(k);
         }
@@ -41,7 +42,13 @@ const mergePdf = async (arr,obj,pages) => {
       await merger.add(path.join(__dirname + '/' + arr[i].path),page);
     }
     if(typeof(obj[i])==='object'){
-      await merger.add(path.join(__dirname + '/' + arr[i].path),obj[i]);
+      let customPage = Array.from(obj[i]);
+      customPage.shift();
+      await merger.add(path.join(__dirname + '/' + arr[i].path),customPage);
+    }
+    if(obj[i]==undefined)
+    {
+      await merger.add(path.join(__dirname + '/' + arr[i].path));
     }
     
   }

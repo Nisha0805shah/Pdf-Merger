@@ -10,6 +10,10 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+  <!-- <script src="../js/index.js"></script> -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+    crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -26,13 +30,10 @@
             <a class="nav-link active" aria-current="page" href="/">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Features</a>
+            <a class="nav-link" href="/">Features</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Pricing</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link disabled">Disabled</a>
+            <a class="nav-link" href="/">Pricing</a>
           </li>
         </ul>
       </div>
@@ -59,7 +60,7 @@
 
             $('#embeded').hide();
             $('#email').hide();
-            
+
             const name = urlParams.get('name');
             // console.log(name);
             if (name != null) {
@@ -106,10 +107,10 @@
 
                   console.log(count);
                   tag.value = count;
-                  let dropid="dropdown"+index;
+                  let dropid = "dropdown" + index;
                   // tag.setAttribute("name", name);
                   console.log(tag.value);
-                  for (i = 1; i <=count; i++) {
+                  for (i = 1; i <= count; i++) {
                     var opt = document.createElement("option");
                     document.getElementById(dropid).innerHTML += '<option id="' + i + ' ">' + i + '</option>';
                   }
@@ -120,28 +121,28 @@
 
 
               document.getElementById('fp').innerHTML = files.map((element, index) => (`
-                
-                </br>
-                <span class="bi bi-file-pdf-fill teal-color" style="font-size: 100px;"> 
-                  </span>Selected File Name is <b> ${element.name} </b>.
-                <div class="card" id="card" style="width: 18rem;">  
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" value="all" name="page-selection-${index}"/>All
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" value="Odd" name="page-selection-${index}"/>Odd
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" value="Even" name="page-selection-${index}"/>Even
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" value="Custom" onchange="document.getElementById('dropdown${index}').style.display='inline'"/>Custom<br>
-                      <select id="dropdown${index}" value="Custom" name="page-selection-${index}" style="display: none;" multiple>
-                      </select> 
-                  </div>
+      
+              </br>
+              <span class="bi bi-file-pdf-fill teal-color" style="font-size: 100px;"> 
+                </span>Selected File Name is <b> ${element.name} </b>.
+              <div class="card" id="card" style="width: 18rem;">  
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" value="all"  name="page-selection-${index}"/>All
                 </div>
-                
-                <input type="hidden" id="filepage${index}" name="filepage${index}" value="">`
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" value="Odd" name="page-selection-${index}"/>Odd
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" value="Even" name="page-selection-${index}"/>Even
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" value="Custom"  name="page-selection-${index}" onchange="document.getElementById('dropdown${index}').style.display='inline'"/>Custom<br>
+                    <select id="dropdown${index}" value="Custom" name="page-selection-${index}" style="display: none;" multiple>
+                    </select> 
+                </div>
+              </div>
+              
+              <input type="hidden" id="filepage${index}" name="filepage${index}" value="">`
               ))
 
             }
@@ -172,8 +173,8 @@
 
           };
 
-          function getEmail(){
-            let emailid =  $("#emailid").val()
+          function getEmail() {
+            let emailid = $("#emailid").val()
             // Document.getElementById('emailid');
             const urlParams = new URLSearchParams(window.location.search);
             const name = urlParams.get('name');
@@ -182,17 +183,16 @@
               email: emailid
             };
             console.log(obj);
-            let sendEmail = "email/" +  JSON.stringify(obj) + "";
+            let sendEmail = "email/" + JSON.stringify(obj) + "";
             console.log(sendEmail);
             $('#emailpath').attr('action', sendEmail);
           }
 
-        
 
         </script>
         <label for="formFileMultiple" class="form-label">Select pdf</label>
         <i class="fas fas-paper-plane"></i>
-        <div class="row"  >
+        <div class="row">
           <input class="form-control mb-3 w-50 col-sm-8 col-md-8" name="pdfs" type="file" id="fileUpload" multiple
             accept=".pdf" value="" onchange="GetFileSizeNameAndType()" required>
           <input type="hidden" name="filesize" value="" id="filesize">
@@ -212,19 +212,15 @@
       </div>
       <!-- <button type="submit" id="submit" class="btn btn-secondary" style="float: right;">Save</button> -->
       <div id="email">
-      <form action="/email" id="emailpath">
-        <button type="submit" id="download" class="btn btn-secondary float-end mb-2 mx-2" onclick="getEmail()">Email</button>
-        <input id="emailid" type="email" placeholder="Enter recipient Email" class="float-end mb-2 mx-2" required></input>
-      </form>
+        <form action="/email" id="emailpath">
+          <button type="submit" id="download" class="btn btn-secondary float-end mb-2 mx-2"
+            onclick="getEmail()">Email</button>
+          <input id="emailid" type="email" placeholder="Enter recipient Email" class="float-end mb-2 mx-2"
+            required></input>
+        </form>
       </div>
-
     </div>
   </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
-    crossorigin="anonymous"></script>
-
 </body>
 
 </html>
